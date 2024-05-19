@@ -2,7 +2,7 @@
 
 This collaborative project, completed as part of Cornell University's [ECE 5760 course](https://people.ece.cornell.edu/land/courses/ece5760/) under the guidance of Professor V. Hunter Adams, was a joint effort by Keyun Gao, Yen-An Lu, and Dengyu (Spud) Tu. The team successfully designed and implemented a FPGA accelerated Sudoku Puzzle Solver.
 
-This project aims to solve Sudoku puzzles using Field-Programmable Gate Array (FPGA) technology, providing users with an elegant interface for interacting with the Sudoku grid. Sudoku puzzles are not only entertaining but also offer cognitive benefits such as problem-solving and critical thinking. Leveraging the rapid processing capabilities of FPGA, we have created an engaging platform for Sudoku enthusiasts to enjoy and improve their skills.
+This project aims to solve Sudoku puzzles using Field-Programmable Gate Array (FPGA) technology, providing users with an elegant interface for interacting with the Sudoku grid. Sudoku puzzles are not only entertaining but also offer cognitive benefits such as problem-solving and critical thinking. Leveraging the rapid processing capabilities of FPGA, this project hopes to create an engaging platform for Sudoku enthusiasts to enjoy and improve their skills.
 
 **Technical Details:**
 - **Hardware Component:** [Intel DE1-SoC](https://www.intel.com/content/www/us/en/partner/showcase/offering/a5b3b0000004cbaAAA/de1soc-board.html), VGA display, Micro SD card, Keyboard, Mouse.
