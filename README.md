@@ -16,8 +16,9 @@ A visual representation of the project's capabilities is showcased in the [Video
 
 ## Project Components
 The project repository includes:
-- Several C files responsible for .
-- SDL files containing designs for all 3D-printed components.
+- Several C files to receive user input, draw on VGA display, control the game and send data to VGA.
+- Verilog files to implement the hardware solver on Sudoku Puzzle.
+- DE1 file that configures the FPGA and connects with the VGA display.
   
 ## Installation Procedure
 1. **Connect Components:** Connect the SoC platform with the VGA display (**Caution:** our VGA pixel clock runs around 25 MHz. If your VGA clock runs at differnt frequency, you might need to configure the DE1_SoC_Computer file yourself.)
@@ -30,4 +31,5 @@ The project repository includes:
 9. **Compile C Code:** Compile the Final.c file with command `Final.c -o Final -O2 -lm` .
 10. **Run Application:** Run the application on Linux with terminal command `./Final /dev/input/eventx (where x depends on the event number of the keyboard in Linux)`.
 
-This innovative drawing robot not only serves as an impressive demonstration of engineering and programming skills but also stands as a testament to collaborative excellence within the academic realm.
+## Copyright and License
+This project is licensed under the [MIT](https://github.com/StartBootstrap/startbootstrap-clean-blog/blob/master/LICENSE) License.
