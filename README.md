@@ -16,9 +16,9 @@ A visual representation of the project's capabilities is showcased in the [Video
 
 ## Project Components
 The project repository includes:
-- Several C files to receive user input, draw on VGA display, control the game and send data to VGA.
-- Verilog files to implement the hardware solver on Sudoku Puzzle.
-- DE1 file that configures the FPGA and connects with the VGA display.
+- Multiple C files responsible for functions such as receiving user input, rendering graphics on the VGA display, managing game controls, and transmitting data to the VGA.
+- Verilog files dedicated to implementing the hardware solver for Sudoku puzzles.
+- DE1 file designed to configure the FPGA and establish connections with the VGA display.
   
 ## Installation Procedure
 1. **Connect Components:** Connect the SoC platform with the VGA display (**Caution:** our VGA pixel clock runs around 25 MHz. If your VGA clock runs at differnt frequency, you might need to configure the DE1_SoC_Computer file yourself.)
