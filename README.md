@@ -24,11 +24,11 @@ The project repository includes:
 1. **Connect Components:** Connect the SoC platform with the VGA display (**Caution:** our VGA pixel clock runs around 25 MHz. If your VGA clock runs at differnt frequency, you might need to configure the DE1_SoC_Computer file yourself.)
 2. **Load Linux Image:** Load a Linux image onto the Micro SD card. (Windows User: use software like Win32 Disk Imager. Mac User: use software like [ApplePiBaker](https://www.tweaking4all.com/software/macosx-software/macosx-apple-pi-baker/).)
 4. **Clone Repository:** Clone the repository to your local machine.
-5. **Unzip Folder:** Unzip the FPGA+VGA_Final.zip file inside the DE1 folder.
-6. **Compile Verilog Code:** Compile the DE1_SoC_Computer.qar file which is inside the computer_640_16bit_video/verilog folder using your preferred FPGA development environment. (We used [Quartus](https://www.intel.com/content/www/us/en/products/details/fpga/development-tools/quartus-prime.html).)
+5. **Unzip Folder:** Unzip the `FPGA+VGA_Final.zi`p file inside the DE1 folder.
+6. **Compile Verilog Code:** Compile the `DE1_SoC_Computer.qar` file which is inside the `computer_640_16bit_video/verilog` folder using your preferred FPGA development environment. (We used [Quartus](https://www.intel.com/content/www/us/en/products/details/fpga/development-tools/quartus-prime.html).)
 7. **Upload Bitstream:** Upload the generated bitstream to your FPGA board.
-8. **Upload C file:** Upload the Final.c file which is inside the C folder to your Micro SD card.
-9. **Compile C Code:** Compile the Final.c file with command `Final.c -o Final -O2 -lm` .
+8. **Upload C file:** Upload the `Final.c` file which is inside the `C` folder to your Micro SD card.
+9. **Compile C Code:** Compile the `Final.c` file with command `Final.c -o Final -O2 -lm` .
 10. **Run Application:** Run the application on Linux with terminal command `./Final /dev/input/eventx (where x depends on the event number of the keyboard in Linux)`.
 
 ## Copyright and License
