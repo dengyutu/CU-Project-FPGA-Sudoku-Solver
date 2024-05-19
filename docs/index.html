@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>ECE5760 - FPGA Sudoku Puzzle Solver</title>
+        <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">
+                <span class="d-block d-lg-none">FOGA Sudoku Puzzle Solver</span>
+                <span class="d-none d-lg-block"><img class="img-fluid img-profile mx-auto mb-2" src="assets/img/engineering.jpeg" alt="..." /></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#Introduction">Introduction</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#High Level Design">High Level Design</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#Hardware Design">Hardware Design</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#Software Design">Software Design</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#Testing and Result">Testing and Result</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#Conclusion">Conclusion</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#Appendix">Appendix</a></li>
+                </ul>
+            </div>
+        </nav>
+        <!-- Page Content-->
+        <div class="container-fluid p-0">
+            <!-- About-->
+            <section class="resume-section" id="about">
+                <div class="resume-section-content">
+                    <h1 class="mb-0">
+                        FPGA
+                        <span class="text-primary">Sudoku Puzzle </span>
+                        Solver
+                    </h1>
+                    <div class="subheading mb-5">
+                        A hardware accelerated sudoku puzzle solver, implemented on the FPGA.
+                        <!-- <a href="mailto:name@email.com">name@email.com</a> -->
+                    </div>
+                    <p class="lead mb-5">Our project aimed to solve Sudoku puzzles using FPGA, complemented by an elegant interface that allows users to interact with the Sudoku grid. We chose this project to leverage FPGAs rapid processing capabilities, creating an engaging and interactive platform for Sudoku enthusiasts. Sudoku puzzles not only offer entertainment but also enhance cognitive skills such as problem-solving and critical thinking.</p>
+                    <p class="lead mb-0">In our implementation, users can control the Sudoku grid using a mouse and keyboard. We utilized a backtracking algorithm on the FPGA to solve the puzzles efficiently. The on-chip CPU, with the help of the FPGA, displays the Sudoku grid on a VGA screen, enabling users to input numbers and see the puzzle visually. The FPGA handles the solving process in real-time, updating the grid and providing immediate feedback.</p>
+                </div>
+            </section>
+            <hr class="m-0" />
+
+            <!-- Introduction-->
+            <section class="resume-section" id="Introduction">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Introduction</h2>
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <p>Sudoku puzzle is a widely popular math game. In its basic and widely recognized form, Sudoku comprises a 9 × 9 grid, with numbers already filled in some of the squares. The goal of the puzzle is to complete the grid by filling in the remaining squares, ensuring that each row, column, and the nine      3 × 3 subgrids contain the numbers 1 through 9 exactly once. The trick to solve the puzzle is to utlize the numbers contain in the grid as hints to deduce possible solutions. Figure below is an example of one of the world's hardest sudoku puzzle. It is very challenging because it only has one solution while the puzzle only provides limited hint. If you are interested, try to solve the puzzle by yourselves and compared the result with our implementation which is shown in the testing and result section. </p>
+                            <img src="assets/img/hardest_sudoku.png" alt="World hardest sudoku" width="504" height="508" style="display: block; margin: auto;">
+                            <p> </p>
+                            <p>The hardware we are using is the <a href="https://www.intel.com/content/www/us/en/partner/showcase/offering/a5b3b0000004cbaAAA/de1soc-board.html">Intel DE1_SoC</a> board. The DE1-SoC is a development board created by Altera (now part of Intel) designed for system-on-chip (SoC) applications and experiments, integrating a variety of hardware features to facilitate collaboration between FPGA (Field Programmable Gate Array) and ARM processor design. Key components include the high-performance Cyclone V FPGA for hardware acceleration and parallel processing, and the dual-core ARM Cortex-A9 for running embedded software and operating systems. The board offers various peripherals and interfaces, such as buttons and switches for user input, a seven-segment display, an ADC for analog-to-digital conversion, an audio codec for I2C communication, video input for camera connectivity, VGA output, Ethernet for network communication, GPIO for external device interfacing. Figure below is the DE1-SoC board.</p>
+                            <img src="assets/img/DE1-SoC.png" alt="DE1-SoC board" width="646" height="469" style="display: block; margin: auto;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr class="m-0" />
+
+            <!-- High Level Design-->
+            <section class="resume-section" id="High Level Design">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">High Level Design</h2>
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <p>The rationale behind our project is to create an engaging and interactive platform for Sudoku enthusiasts that leverages the power of FPGA technology for rapid puzzle solving. Sudoku, a popular logic-based puzzle, not only provides entertainment but also helps in enhancing cognitive skills such as problem-solving and critical thinking. By integrating a VGA interface, we aim to offer a visually appealing and user-friendly experience that can be easily accessed and manipulated.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Overal Structure</h3>
+                            <img src="assets/img/overal_structure.png" alt="Overal Structure" width="763" height="400" style="display: block; margin: auto;">
+                            <p>The figure above is the overall structure of the Sudoku solver. The HPS first sends the Sudoku puzzle to the VGA screen, displaying the problem visually. Simultaneously, the Sudoku puzzle is sent to the FPGA. The control unit in the FPGA receives the puzzle and writes it to the Sudoku register. The control unit then notifies the updater unit, which is responsible for updating the Sudoku grid.</p>
+                            <p>Once the puzzle is input, the updater uses the backtracking algorithm to update the values in the Sudoku register, with assistance from the control unit. After each update, the checker verifies whether the solution is valid. Based on the checker's results, the updater continues to adjust the Sudoku register according to the backtracking algorithm until a valid solution is found.</p>
+                            <p>The four modules are explained in detail in the Hardware Design section.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">backtracking Algorithm</h3>
+                            <p>Like all other Backtracking problems, Sudoku can be solved by assigning numbers one by one to empty cells. Before assigning a number, check whether it is safe to assign.Check that the same number is not present in the current row, current column and current 3X3 subgrid. After checking for safety, assign the number, and recursively check whether this assignment leads to a solution or not. If the assignment doesn’t lead to a solution, then try the next number for the current empty cell. And if none of the numbers (1 to 9) leads to a solution, return false and print no solution exists.</p>
+                            <p>Follow the steps below to solve the problem. We start with the first empty cell and test numbers from 1 to 9 sequentially. If a number satisfies all three conditions—meaning it is not already present in the same row, column, or block—we place that number in the cell. We then proceed to the next empty cell and repeat the process with the updated Sudoku board. As we continue, we might encounter a cell where no number between 1 and 9 fits. When this happens, we backtrack to the previous cells and try alternative numbers. Given that a Sudoku puzzle has only one solution, we will keep rejecting invalid solutions until we find the correct one that meets all conditions for every initially empty cell.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Hardware/software trade offs</h3>
+                            <p>The hardware tradeoff is related to resource usage. We used 81 registers to store the Sudoku map. However, to facilitate updating the registers, the updater itself also stores the empty cells that need to be updated. Since the number of empty cells can be up to 81, this means we used double the number of registers. With a more refined design, we should be able to halve the number of registers used.</p>
+                            <p>Additionally, we considered preprocessing the Sudoku map on the software side so that the updater would know the possible ranges for the empty cells, thus reducing the range of potential answers. However, this preprocessing would also require time. Due to the complexity of this design, we have not implemented it yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr class="m-0" />
+            <!-- Hardware Design-->
+            <section class="resume-section" id="Hardware Design">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Hardware Design</h2>
+                    <p>The hardware design is seperate into four modules: Control Unit, Sudoku Register, Updater and Checker as shown in Figure below. Each module is designed and tested seperately. Each module has different functionalities and communicate through the signals indicated in the Figure. </p>
+                        <img src="assets/img/block_diagram.png" alt="Structure design of the hardware" width="562" height="465" style="display: block; margin: auto;">
+                        <p>        </p>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Control Unit</h3>
+                            <p>The control unit plays a pivotal role in the Sudoku solver, overseeing the functions of the updater, checker, and Sudoku register. Initially, it manages input signals, distributing them to both the updater and the Sudoku register. As the updater works on updating data within the Sudoku register array, the control unit assists by facilitating the writing process. Once the update is complete, the control unit prompts the checker to verify the Sudoku puzzle.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Sudoku Register</h3>
+                            <p>Each solver contains a register array of 4 bits * 81 size. The value of each array is updated by the updater and read and checked by the checker. Each register stores a 4-bit value representing the answer to the Sudoku cells. For example, numbers from 1-9, with 0 indicating an empty cell.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Updater</h3>
+                            <p>The updater contains two arrays of 81 registers each. One array stores the cell values, while the other stores the positions of these values in the Sudoku register. Initially, all values are set to zero, representing empty cells. The updater receives signals from the checker to determine how to proceed with updates. When the updater starts, it writes values to both its own register and the Sudoku register.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Checker</h3>
+                            <p>The checker verifies the validity of the current values in the Sudoku register. Utilizing the backtracking algorithm, it ensures that values are written to the next cell only if the previously filled values form a valid solution. Therefore, it only checks the column, row, and block related to the most recently filled value. The checker comprises three modules that check the relevant column, row, and block for a given position.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Qsys Port</h3>
+                            <p>To facilitate communication between the HPS and FPGA, we established Qsys ports to enable data exchange between the two components. The figures below depict our Qsys implementation, illustrating the configuration and interconnection of these ports.</p>
+                            <img src="assets/img/Qsys_Layout1.PNG" alt="Qsys_Layout1" width="710" height="355" style="display: block; margin: auto;">
+                            <img src="assets/img/Qsys_Layout2.PNG" alt="Qsys_Layout2" width="710" height="227" style="display: block; margin: auto;">
+                            <img src="assets/img/Qsys_Layout3.PNG" alt="Qsys_Layout3" width="710" height="227" style="display: block; margin: auto;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr class="m-0" />
+            <!-- Software Design-->
+            <section class="resume-section" id="Software Design">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Software Design and Implementation</h2>
+                    <p>Our project utilizes a System-on-Chip (SoC) platform, integrating an ARM Cortex-A9 processor, referred to as the Hard Processor System (HPS) according to Intel's terminology. We employed a Linux operating system running on the HPS to compile and execute the C program essential for our Sudoku puzzle solver. </p>
+                    <p>The primary objectives of the C program include: </p>
+                    <ul>
+                        <li>Drawing the Sudoku grid on a VGA display.</li>
+                        <li>Handling user input and interaction via mouse and keyboard.</li>
+                        <li>Sending Sudoku puzzle data to the FPGA for processing.</li>
+                        <li>Receiving the solution from the FPGA and displaying it on the VGA.</li>
+                    </ul>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">VGA Display Interface</h3>
+                            <p>To render the Sudoku grid on the VGA screen, we utilized external SDRAM in the DE1-SoC as a frame buffer. The FPGA continuously reads pixel values from the SDRAM to display on the VGA screen, while the HPS updates the pixel values in the SDRAM to refresh the display.</p>
+                            <div class="subheading mb-3">Drawing Functions</div>
+                            <p>The graphical output is managed through a series of drawing functions in C:</p>
+                            <ul>
+                                <li><code>drawPixel:</code> Draws a pixel of a specified color at given coordinates. </li>
+                                <li><code>drawLine</code>, <code>drawDisk</code>, <code>drawRectangle</code>, <code>drawBox</code>: Built upon <code>drawPixel</code> to draw various shapes needed for the interface.</li>
+                                <li>Sending Sudoku puzzle data to the FPGA for processing.</li>
+                                <li>Receiving the solution from the FPGA and displaying it on the VGA.</li>
+                            </ul>
+                            <div class="subheading mb-3">Grid and Number Rendering</div>
+                            <p>The Sudoku grid is rendered using the <code>drawLine</code> function. The initial coordinates and spacing between rows and columns are calculated to ensure a centered and evenly spaced 9x9 grid. </p>
+                            <p> To display numbers within the grid, we designed custom fonts following the Digital-7 Regular Font design. Each digit is composed of vertical and horizontal rectangles, and specific functions (<code>drawOne</code> through <code>drawNine</code>) were created to draw digits at defined positions.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">User Interaction</h3>
+                            <p>We believe the best way to interact with the Sudoku puzzle is through a mouse and keyboard just like using pens to write in a paper. We utilized two USB hosts on DE1-SoC to connect a mouse and keyboard with HPS.</p>
+                            <ul>
+                                <li> <strong>Mouse:</strong> Connected via USB and read from <code>/dev/input/mice</code>, the mouse position is tracked by summing relative movements. We use a non-blocking read function to ensure smooth interaction.</li>
+                                <li> <strong>Keyboard:</strong> Connected via USB and read from <code>/dev/input/event#</code>, where # varies. The non-blocking read function is used to capture key presses, which are then mapped to corresponding numbers.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Grid State Management</h3>
+                            <p>A one-dimensional array of length 81 represents the Sudoku grid, with each element corresponding to a cell. This array updates dynamically as the user inputs or changes numbers.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Game Logic</h3>
+                            <p>Upon starting the game, the user interacts with the grid via a red disc representing the mouse pointer. Numbers are input by left clicking a cell and pressing a key, and erased by right-clicking.</p>
+                            <p>The game's logic flow is as follows:</p>
+                            <ol>
+                                <li><strong>Initialization: </strong>Users input the Sudoku puzzle and press "Initialization Done". The software checks for rule violations, highlighting errors in red.</li>
+                                <p> </p>
+                                <p>Image before Initialization</p>
+                                <img src="assets/img/empty.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                                <p> </p>
+                                <p>Image of Wrong Initialization</p>
+                                <img src="assets/img/wrong initialization.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                                <p> </p>
+                                <p>Image of Correct Initialization</p>
+                                <img src="assets/img/initialization.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                                <p> </p>
+                                <li><strong>Mode Selection: </strong>Users choose between "User mode" (solving manually) and "FPGA mode" (solved by the FPGA). The digit colors indicate the mode (green for user input, black for initialization, and blue for FPGA solution).</li>
+                                <p>Image of User mode</p>
+                                <img src="assets/img/User mode.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                                <p> </p>
+                                <li><strong>FPGA Interaction:</strong> If FPGA mode is selected, the HPS sends the grid data to the FPGA via Qsys ports, waits for the FPGA to solve it, and then retrieves and displays the solution. The total processing time of FPGA is also shown in the upper left corner of VGA.</li>
+                                <p> </p>
+                                <p>Image of User mode + FPGA mode</p>
+                                <img src="assets/img/User+FPGA.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                                <p> </p>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">FPGA Communication</h3>
+                            <div class="subheading mb-3">Sending Data to FPGA</div>
+                            <p>The communication between the HPS and FPGA for transmitting the Sudoku puzzle involves the following steps:</p>
+                            <ol>
+                                <li><strong>Initiate Transmission:</strong> The HPS sends a flag to the FPGA to indicate the start of data transmission.</li>
+                                <li><strong>Transmit Cell Values:</strong> The HPS sends the value of each cell along with its corresponding address through dedicated Qsys ports. This process continues until all cells of the Sudoku grid have been transmitted.</li>
+                                <li><strong>Completion Signal:</strong> After transmitting all the cell values, the HPS sends a completion signal to the FPGA, indicating that the data transmission is finished.</li>
+                            </ol>
+                        <div class="subheading mb-3">Sending Data to FPGA</div>
+                            <p>Once the data transmission is complete, the HPS follows these steps to receive the processed data from the FPGA:</p>
+                            <ol>
+                                <li><strong>Status Signal: </strong> The HPS waits for a status signal from the FPGA. This signal indicates whether the FPGA has successfully solved the puzzle.</li>
+                                <ul>
+                                    <li>If the status signal is 2, it means the FPGA could not solve the puzzle.</li>
+                                    <li>If the status signal is 1, it means the FPGA has successfully solved the puzzle and is ready to transmit the solution.</li>
+                                </ul>
+                                <li><strong>Retrieve Solved Puzzle: </strong> Upon receiving a status signal of 1, the HPS sends an address to the FPGA. The FPGA then responds with the solved value for that address. This process is repeated until the entire solved puzzle is received by the HPS.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Main Loop</h3>
+                            <p>The program operates within a continuous loop, updating the display and processing user input:</p>
+                            <ul>
+                                <li>The mouse pointer is redrawn at its new position, and the previous position is cleared by drawing a white cycle to cover it.</li>
+                                <li>The grid and numbers are refreshed each loop iteration to ensure consistency.</li>
+                            </ul>
+                            <p>This loop continues until the user decides to quit the game.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills
+            <section class="resume-section" id="skills">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Skills</h2>
+                    <div class="subheading mb-3">Programming Languages & Tools</div>
+                    <ul class="list-inline dev-icons">
+                        <li class="list-inline-item"><i class="fab fa-html5"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-css3-alt"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-js-square"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-angular"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-react"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-node-js"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-sass"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-less"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-wordpress"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-gulp"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-grunt"></i></li>
+                        <li class="list-inline-item"><i class="fab fa-npm"></i></li>
+                    </ul>
+                    <div class="subheading mb-3">Workflow</div>
+                    <ul class="fa-ul mb-0">
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>
+                            Mobile-First, Responsive Design
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>
+                            Cross Browser Testing & Debugging
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>
+                            Cross Functional Teams
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>
+                            Agile Development & Scrum
+                        </li>
+                    </ul>
+                </div>
+            </section> -->
+            <hr class="m-0" />
+            <!-- Interests-->
+            <section class="resume-section" id="Testing and Result">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Testing and Result</h2>
+                    <p>We tested our implementation with the world's hardest puzzle. The result is shown below.</p>
+                    <p> </p>
+                    <p>Image of initialization</p>
+                    <img src="assets/img/hardest_sudoku_FPGA.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                    <p> </p>
+                    <p>When we input 1 into the upper right cell, the FPGA did not return any solution</p>
+                    <img src="assets/img/no solution.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                    <p> </p>
+                    <p>If we deleted 1 and let FPGA to solve it, FPGA returns the correct solution</p>
+                    <img src="assets/img/actual solution.jpeg" alt="empty grid" width="640" height="480" style="display: block; margin: auto;">
+                    <p></p>
+                    <h3 class="mb-0">Speed</h3>
+                    <p>The speed of the solver depends on the difficulty and the number of solutions of the Sudoku puzzle. If the puzzle has many possible solutions, the solver is more likely to find one quickly. For a simple Sudoku puzzle, the solver can finish in a few hundred microseconds. However, for a harder puzzle, or if the solution for the first empty cell is a larger number, it may take around 10,000 microseconds to complete. As we shown in the figure above, it took FPGA 34757 microseconds to solve the problem.</p>
+                    <h3 class="mb-0">Usability</h3>
+                    <p>We implemented a visually appealing user interface that closely resembles common Sudoku layouts. By clicking on the positions of the Sudoku grid displayed on the VGA screen, users can assign numbers to the Sudoku puzzle. In user mode, players can solve the Sudoku themselves by adding numbers to the grid. If they wish to stop playing, they can switch to FPGA mode, where the FPGA will solve the puzzle for them. Additionally, if the input Sudoku violates any rules, errors are highlighted on the screen to inform the user of the mistakes in the Sudoku grid.</p>
+                    <h3 class="mb-0">Resource Usage</h3>
+                    <p>The figure shows all the resources we used.</p>
+                    <img src="assets/img/Resource_usage.PNG" alt="resource usage" width="444" height="447" style="display: block; margin: auto;">
+                    <p>The figure below illustrates the chip planner for our solver. In this visual representation, the entirety of available resources is depicted, with the dark blue region highlighting the resources currently in use. A notable observation from this depiction is the abundance of available resources, indicating ample room for further implementation of parallel solvers. This insight suggests potential for enhancing the efficiency and scalability of our solver by leveraging additional parallel processing capabilities.</p>
+                    <img src="assets/img/Chip_planner.PNG" alt="resource usage" width="489" height="692" style="display: block; margin: auto;">
+                    <h3 class="mb-0">Video Demonstration</h3>
+                    <center>
+                        <iframe width="640" height="360" src="https://www.youtube.com/embed/6yiWjeeNqF0" frameborder="0" allowfullscreen></iframe>
+                    </center>
+                    </div>
+            </section>
+            <hr class="m-0" />
+            <!-- Interests-->
+            <section class="resume-section" id="Conclusion">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Conclusion</h2>
+                    <p>Our design successfully met our expectations in several key areas. We aimed to create an engaging and interactive platform for solving Sudoku puzzles using FPGA technology, and we achieved this with a user-friendly VGA interface and a functional backtracking algorithm. The FPGA efficiently handled the puzzle-solving process, and the VGA interface provided a visually appealing way for users to interact with the Sudoku grid. The system's ability to quickly solve puzzles and the intuitive user interface demonstrated the effectiveness of our high-level design and implementation.</p>
+                    <p>However, there are a few areas where improvements could be made. One significant aspect is the hardware resource usage. We used 81 registers to store the Sudoku map and an additional set of registers for the updater, leading to double the number of registers. In future designs, we could refine this approach to reduce the number of registers used, potentially by half, through more efficient management of the empty cells.</p>
+                    <p>Additionally, while we considered preprocessing the Sudoku map on the software side to reduce the range of possible answers for the empty cells, we did not implement this due to the complexity and additional processing time required. Implementing such a preprocessing step could optimize the puzzle-solving process and reduce the overall time taken to find a solution.</p>
+                    <p>We also experimented with using multiple solvers to parallelize the solving process, but this approach increased the design complexity significantly. Future iterations could explore more sophisticated methods to manage and distribute tasks among multiple solvers without substantially increasing complexity.</p>
+                    <p>Overall, our design met our primary objectives, but future iterations could focus on optimizing hardware resource usage and exploring preprocessing techniques to enhance performance further. By addressing these areas, we can create a more efficient and robust Sudoku-solving platform.</p>
+                    </div>
+            </section>
+            <hr class="m-0" />
+            <section class="resume-section" id="Appendix">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Appendix</h2>
+                    <div class="subheading mb-3">Permissions</div>
+                    <p>The group approves this report for inclusion on the course website.</p>
+                    <p>The group approves the video for inclusion on the course youtube channel.</p>
+                    <div class="subheading mb-3">Work Distribution</div>
+                    <p>Hardware Design: Keyun Gao, Yen-An Lu, Dengyu Tu</p>
+                    <p>Software Implementation: Keyun Gao, Yen-An Lu, Dengyu Tu</p>
+                    <p>Report: Keyun Gao, Yen-An Lu, Dengyu Tu</p>
+                    <div class="subheading mb-3">Code</div>
+                    <p>This is the github repository all the codes:</p>
+                    <a href="https://github.com/dengyutu/CU-Project-FPGA-Sudoku-Solver">Final Project Code </a>
+                    <div class="subheading mb-3">Our thoughts after ECE5760.</div>
+                    <img src="assets/img/meme.png" alt="empty grid" width="650" height="500" style="display: block; margin: auto;">
+                    <p>Source: <a href="https://www.reddit.com/r/FPGA/comments/nl723x/i_made_a_meme_i_thought_you_guys_would_laugh_at/">reddit post</a></p>
+                    </div>
+                    
+            </section>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
